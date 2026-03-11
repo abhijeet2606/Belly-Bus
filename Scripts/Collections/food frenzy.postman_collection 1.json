@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "ce65324f-a444-4d90-9af3-628e2646d86f",
+    "_postman_id": "651925e6-f313-4b70-ba04-df2df0337449",
     "name": "food frenzy",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "22854270",
-    "_collection_link": "https://go.postman.co/collection/22854270-ce65324f-a444-4d90-9af3-628e2646d86f?source=collection_link"
+    "_exporter_id": "24946865",
+    "_collection_link": "https://go.postman.co/collection/24946865-651925e6-f313-4b70-ba04-df2df0337449?source=collection_link"
   },
   "item": [
     {
@@ -44,7 +44,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n   \"deviceId\":\"device123\",\r\n   \"os\":\"android\"\r\n}",
+              "raw": "{\r\n   \"deviceId\":\"9d5cb9eda56749809430fb3a32c1b539\",\r\n   \"fullName\": \"Abhijeet\",\r\n   \"os\":\"android\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -500,6 +500,75 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "Challenge",
+          "item": [
+            {
+              "name": "Get Challenges",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/challenges/",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "challenges",
+                    ""
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Challenges",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"taskType\": 8000,\r\n  \"entity\": \"Lettuce\",\r\n  \"difficulty\": 8100,\r\n  \"target\": 20,\r\n  \"rewardCoins\": 50\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/challenges/",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "challenges",
+                    ""
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Challenges Copy",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}/admin/challenges/699fffb9603fef6690e8bc0d",
+                  "host": [
+                    "{{local}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "challenges",
+                    "699fffb9603fef6690e8bc0d"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
         }
       ],
       "auth": {
@@ -507,7 +576,7 @@
         "bearer": [
           {
             "key": "token",
-            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTc5ZGQ5ZGQ2ZDEzMTA0ZTVjZDI1NjEiLCJyb2xlIjoxMDEsInRva2VuVHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MDQ1MTc4NiwiZXhwIjoxNzczMDQzNzg2fQ.J5vvB4FIyVcYE0yGO2P6tueyXgHShUy3iKeDX6Ab6DU",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTc5ZGQ5ZGQ2ZDEzMTA0ZTVjZDI1NjEiLCJyb2xlIjoxMDEsInRva2VuVHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MjA4NTEzNCwiZXhwIjoxNzc0Njc3MTM0fQ.yGRr8iBseI8s2Xksp709uCkMz7_7JPTWOcU6EDiorHs",
             "type": "string"
           }
         ]
@@ -547,7 +616,142 @@
               "name": "get-tasks",
               "request": {
                 "method": "GET",
-                "header": []
+                "header": [],
+                "url": {
+                  "raw": "{{local}}player/tasks/daily-grouped",
+                  "host": [
+                    "{{local}}player"
+                  ],
+                  "path": [
+                    "tasks",
+                    "daily-grouped"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "levels",
+          "item": [
+            {
+              "name": "levelComplete",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"level\":0,\r\n    \"coins\":0,\r\n    \"life\": -1,\r\n    \"trophies\": -5\r\n    // \"blender\": -900,\r\n    // \"verticalKnife\": -900\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}player/level/complete",
+                  "host": [
+                    "{{local}}player"
+                  ],
+                  "path": [
+                    "level",
+                    "complete"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "auth": {
+            "type": "bearer",
+            "bearer": [
+              {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OThjNjJkYzliOTg3Zjc5NjY4MzQ2N2QiLCJyb2xlIjoxMDAsInRva2VuVHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MDg3MzM5NywiZXhwIjoxNzczNDY1Mzk3fQ.o98tgcQ_-fG5RDtwKPO_itm0bL09aWEJZYpSAJ894aM",
+                "type": "string"
+              }
+            ]
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Leaderboards",
+          "item": [
+            {
+              "name": "getTier",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}player/leaderboard/tier",
+                  "host": [
+                    "{{local}}player"
+                  ],
+                  "path": [
+                    "leaderboard",
+                    "tier"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Challenge",
+          "item": [
+            {
+              "name": "weekly challenge",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}/user/challenges/weekly",
+                  "host": [
+                    "{{local}}"
+                  ],
+                  "path": [
+                    "user",
+                    "challenges",
+                    "weekly"
+                  ]
+                }
               },
               "response": []
             }
@@ -559,7 +763,7 @@
         "bearer": [
           {
             "key": "token",
-            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OTg2ZjYwZDIzMmU3MDBiZDlhMWIwNmEiLCJyb2xlIjoxMDAsInRva2VuVHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MDQ1MzA4MCwiZXhwIjoxNzczMDQ1MDgwfQ.rsFlayhLGEEieM2eZaFiINJsnlfAN3c28o1QHIzZo4s",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OThjNjJkYzliOTg3Zjc5NjY4MzQ2N2QiLCJyb2xlIjoxMDAsInRva2VuVHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MTU4MjEwMiwiZXhwIjoxNzc0MTc0MTAyfQ.1Z7_gRmWJ5QsrzPg4d6kuhttcGZ6HW8HIGDFzt_oorI",
             "type": "string"
           }
         ]

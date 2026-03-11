@@ -3158,6 +3158,9 @@ MonoBehaviour:
   PopFXKey: fx_pop_small
   SweepFXKey: fx_row_sweep
   BombFXKey: fx_bomb_big
+  PanSwapFXKey: fx_pan_swap
+  OvenSwapFXKey: fx_oven_swap
+  KnifeSwapFXKey: fx_knife_swap
 --- !u!1 &789578431
 GameObject:
   m_ObjectHideFlags: 0
@@ -6319,16 +6322,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FXManager
   entries:
   - key: fx_pop_small
-    prefab: {fileID: 6294508013172393196, guid: 043176b6a68be2b43b073aaaa4782c7d,
+    prefab: {fileID: 2353600328335836179, guid: ceec7516237b4104b94300043ca39784,
       type: 3}
-    preload: 8
-    defaultLifetime: 0.8
+    preload: 2
+    defaultLifetime: 0.1
   - key: fx_row_sweep
-    prefab: {fileID: 0}
+    prefab: {fileID: 2504214343621411470, guid: 3ed0d324122d7b24eaec75c55c74aafc,
+      type: 3}
     preload: 4
     defaultLifetime: 1
   - key: fx_bomb_big
-    prefab: {fileID: 0}
+    prefab: {fileID: 8771972552311404799, guid: bbf9e36a48d6c5648a13889afab076fd,
+      type: 3}
     preload: 4
     defaultLifetime: 1.2
   - key: fx_goal_sparkle
@@ -6341,6 +6346,16 @@ MonoBehaviour:
     defaultLifetime: 1.5
   - key: fx_lose_puff
     prefab: {fileID: 195492, guid: 4ee919a3cb1ff3448ae1b4c056dd8c35, type: 3}
+    preload: 3
+    defaultLifetime: 1
+  - key: fx_pan_swap
+    prefab: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312,
+      type: 3}
+    preload: 3
+    defaultLifetime: 1
+  - key: fx_oven_swap
+    prefab: {fileID: 8791802859087666345, guid: ae07f2a45f14a82428409cfe410e6002,
+      type: 3}
     preload: 3
     defaultLifetime: 1
 --- !u!1 &1526172524

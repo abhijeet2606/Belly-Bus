@@ -880,8 +880,8 @@ public class HomeUIManager : MonoBehaviour
     public void OnPlayButton()
     {
         if (isBlocked) return;
-        int lives = GetCurrentLife();
-        if (lives <= 0) return;
+        // int lives = GetCurrentLife();
+        // if (lives <= 0) return;
         if (ShouldBlockPlayForOfflineLevel())
         {
             SetInternetConnectivityPanelVisible(true);

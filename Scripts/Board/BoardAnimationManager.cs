@@ -27,6 +27,46 @@ public class BoardAnimationManager : MonoBehaviour
     public string PopFXKey = "fx_pop_small";
     public string SweepFXKey = "fx_row_sweep";
     public string BombFXKey = "fx_bomb_big";
+    public string PanSwapFXKey = "fx_pan_swap";
+    public string OvenSwapFXKey = "fx_oven_swap";
+    public string KnifeSwapFXKey = "fx_knife_swap";
+
+    public void PlaySwapAnimation(GameObject item1, GameObject item2)
+    {
+        if (item1 == null || item2 == null) return;
+
+        var f1 = item1.GetComponent<FoodItem>();
+        var f2 = item2.GetComponent<FoodItem>();
+
+        if (f1 == null || f2 == null) return;
+
+        // Determine which FX to play based on bonus types
+        string fxKey = null;
+
+        if (BonusTypeUtilities.ContainsPan(f1.Bonus) || BonusTypeUtilities.ContainsPan(f2.Bonus))
+        {
+            fxKey = PanSwapFXKey;
+        }
+        else if (BonusTypeUtilities.ContainsOven(f1.Bonus) || BonusTypeUtilities.ContainsOven(f2.Bonus))
+        {
+            fxKey = OvenSwapFXKey;
+        }
+        else if (BonusTypeUtilities.ContainsLinearKnife(f1.Bonus) || BonusTypeUtilities.ContainsLinearKnife(f2.Bonus))
+        {
+            fxKey = KnifeSwapFXKey;
+        }
+
+        if (!string.IsNullOrEmpty(fxKey))
+        {
+            var fx = FXManager.EnsureInstance();
+            if (fx != null)
+            {
+                // Play at the midpoint of the two items
+                Vector3 midPoint = (item1.transform.position + item2.transform.position) * 0.5f;
+                fx.Play(fxKey, midPoint, null, 1.0f);
+            }
+        }
+    }
 
     public float AnimateDestruction(List<GameObject> items, GameObject centerItem = null)
     {

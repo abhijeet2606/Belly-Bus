@@ -1180,6 +1180,13 @@ public class BoardManager : MonoBehaviour
 
         hitGo.transform.DOMove(hitGoPos, GameConstants.AnimationDuration);
         hitGo2.transform.DOMove(hitGo2Pos, GameConstants.AnimationDuration);
+
+        // Play special swap animation if bonuses are involved
+        if (animationManager != null)
+        {
+            animationManager.PlaySwapAnimation(hitGo, hitGo2);
+        }
+
         yield return new WaitForSeconds(GameConstants.AnimationDuration);
 
         var hitGomatchesInfo = grid.GetMatches(hitGo);
