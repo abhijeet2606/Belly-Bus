@@ -222,6 +222,21 @@ public sealed class ProgressDataManager : MonoBehaviour
         }
     }
 
+    public void AddCoins(int amount)
+    {
+        if (amount <= 0) return;
+
+        lock (gate)
+        {
+            bundle.snapshot.coins = SafeAdd(bundle.snapshot.coins, amount);
+            EnqueueSyncEventLocked(SyncEventType.InventoryOnly, 0, amount, 0);
+            SaveBundleLocked();
+        }
+
+        PublishAll();
+        if (Log) Debug.Log($"[Progress] Coins added local. amount={amount} coinsNow={bundle.snapshot.coins} pending={PendingSyncCount}");
+    }
+
     public void ApplyLevelCompleted(int completedLevel, int coinsEarned, int newWinStreak, int trophiesEarned)
     {
         if (completedLevel <= 0) completedLevel = 1;
@@ -240,6 +255,12 @@ public sealed class ProgressDataManager : MonoBehaviour
 
             EnqueueSyncEventLocked(SyncEventType.LevelComplete, completedLevel, coinsEarned, trophiesEarned);
             SaveBundleLocked();
+        }
+
+        if (MissionProgressManager.Instance != null)
+        {
+            MissionProgressManager.Instance.OnLevelCompleted(completedLevel);
+            MissionProgressManager.Instance.OnWinStreak(newWinStreak);
         }
 
         PublishAll();

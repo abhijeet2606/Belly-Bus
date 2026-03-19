@@ -57,6 +57,11 @@ public class HomeUIManager : MonoBehaviour
 
     private void Start()
     {
+        if (ProgressDataManager.Instance != null)
+        {
+            ProgressDataManager.Instance.OnSnapshotChanged += HandleSnapshotChanged;
+        }
+
         isBlocked = PlayerPrefs.GetInt(BlockedKey, 0) == 1;
         SetBlockedPanelVisible(isBlocked);
         SetInternetConnectivityPanelVisible(false);
@@ -74,7 +79,22 @@ public class HomeUIManager : MonoBehaviour
         }
 
         SetLeaderboardVisible(false);
+        LoadLeaderboardFromLocalCache();
         BootstrapLeaderboardOnce();
+    }
+
+    private void OnDestroy()
+    {
+        if (ProgressDataManager.Instance != null)
+        {
+            ProgressDataManager.Instance.OnSnapshotChanged -= HandleSnapshotChanged;
+        }
+    }
+
+    private void HandleSnapshotChanged(ProgressDataManager.ProgressSnapshot snap)
+    {
+        UpdateLevelUI();
+        UpdateBoosterCountUI();
     }
 
     private void Update()
@@ -95,6 +115,11 @@ public class HomeUIManager : MonoBehaviour
         if (isBlocked) return;
         SetLeaderboardVisible(true);
         RefreshLeaderboardUIFromLocalFallback();
+        
+        // If we don't have cached data yet, try to load it from disk
+        if (cachedLeaderboard == null) LoadLeaderboardFromLocalCache();
+        
+        // Apply whatever we have (from memory or disk)
         if (cachedLeaderboard != null) ApplyLeaderboardResponse(cachedLeaderboard);
     }
 
@@ -152,10 +177,44 @@ public class HomeUIManager : MonoBehaviour
                 yield break;
             }
 
-            if (resp == null || !resp.success) yield break;
+            if (resp == null || !resp.success)
+            {
+                Debug.LogWarning($"Leaderboard fetch unsuccessful. Success={resp?.success}");
+                yield break;
+            }
             cachedLeaderboard = resp;
+            SaveLeaderboardToLocalCache(body);
             if (DebugLeaderboardHighlight) Debug.Log($"Leaderboard fetch success. Tier='{resp.tier}' userRank={(resp.userRank != null ? resp.userRank.rank.ToString() : "null")} listCount={(resp.leaderboard != null ? resp.leaderboard.Length : 0)}");
             if (LeaderboardPanel != null && LeaderboardPanel.activeInHierarchy) ApplyLeaderboardResponse(resp);
+        }
+    }
+
+    private const string LeaderboardCacheKey = "LeaderboardDataCache";
+
+    private void SaveLeaderboardToLocalCache(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return;
+        PlayerPrefs.SetString(LeaderboardCacheKey, json);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadLeaderboardFromLocalCache()
+    {
+        string cachedJson = PlayerPrefs.GetString(LeaderboardCacheKey, "");
+        if (string.IsNullOrEmpty(cachedJson)) return;
+
+        try
+        {
+            LeaderboardTierResponse resp = JsonUtility.FromJson<LeaderboardTierResponse>(cachedJson);
+            if (resp != null && resp.success)
+            {
+                cachedLeaderboard = resp;
+                if (DebugLeaderboardHighlight) Debug.Log("Leaderboard loaded from local cache.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"Failed to parse cached leaderboard: {ex.Message}");
         }
     }
 
@@ -589,6 +648,12 @@ public class HomeUIManager : MonoBehaviour
 
         yield return ContinueWithDeviceRoutine();
         if (isBlocked) yield break;
+
+        // Always attempt to fetch missions at launch if they are missing or outdated
+        if (MissionUIManager.IsWeeklyRefreshNeededStatic() || string.IsNullOrEmpty(PlayerPrefs.GetString("MissionsDataCache", "")))
+        {
+            yield return MissionUIManager.BackgroundFetchAndCacheMissions();
+        }
 
         if (pendingBefore > 0)
         {

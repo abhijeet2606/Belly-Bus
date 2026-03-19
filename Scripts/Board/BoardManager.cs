@@ -535,6 +535,10 @@ public class BoardManager : MonoBehaviour
     {
         isGameOver = true;
         state = GameState.Win;
+        if (MissionProgressManager.Instance != null)
+        {
+            MissionProgressManager.Instance.OnFinishWithMovesLeft(currentMoves);
+        }
         StartCoroutine(ShowWinRoutine());
     }
 
@@ -860,8 +864,11 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator ActivateBonusRoutine(GameObject item, GameObject targetForColorBomb = null)
     {
+        var itemFood = item != null ? item.GetComponent<FoodItem>() : null;
+        TrackMissionPowerupUseFromBonusItem(itemFood);
+
         // Special handling for Flies
-        if (BonusTypeUtilities.ContainsFlies(item.GetComponent<FoodItem>().Bonus))
+        if (itemFood != null && BonusTypeUtilities.ContainsFlies(itemFood.Bonus))
         {
             StartCoroutine(ActivateFliesRoutine(item));
             yield break;
@@ -878,6 +885,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (var match in totalMatches)
         {
+            TrackMissionCollected(match.GetComponent<FoodItem>());
             if (levelGoals != null)
             {
                 var shape = match.GetComponent<FoodItem>();
@@ -968,6 +976,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (var m in itemsToDestroy)
         {
+            TrackMissionCollected(m.GetComponent<FoodItem>());
             if (levelGoals != null)
             {
                 var shape = m.GetComponent<FoodItem>();
@@ -1067,9 +1076,14 @@ public class BoardManager : MonoBehaviour
 
              foreach (var item in totalMatches)
              {
+                 var shape = item.GetComponent<FoodItem>();
+                 TrackMissionCollected(shape);
+                 if (shape != null && !BonusTypeUtilities.ContainsFlies(shape.Bonus))
+                 {
+                     TrackMissionPowerupUseFromBonusItem(shape);
+                 }
                  if (levelGoals != null)
                  {
-                     var shape = item.GetComponent<FoodItem>();
                      foreach (var goal in levelGoals)
                      {
                          if (shape.Type.Contains(goal.TargetPrefabName))
@@ -1079,6 +1093,27 @@ public class BoardManager : MonoBehaviour
                          }
                      }
                  }
+             }
+
+             List<GameObject> fliesTargets = new List<GameObject>();
+             foreach (var item in totalMatches)
+             {
+                 var shape = item.GetComponent<FoodItem>();
+                 if (shape != null && BonusTypeUtilities.ContainsFlies(shape.Bonus))
+                 {
+                     if (MissionProgressManager.Instance != null)
+                     {
+                         MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.FLIES);
+                         MissionProgressManager.Instance.OnTriggerBee();
+                     }
+                     var target = GetFlyTarget(totalMatches.Union(fliesTargets));
+                     if (target != null) fliesTargets.Add(target);
+                 }
+             }
+             if (fliesTargets.Count > 0)
+             {
+                 totalMatches = totalMatches.Union(fliesTargets).Distinct().ToList();
+                 columns = totalMatches.Select(go => go.GetComponent<FoodItem>().Column).Distinct().ToList();
              }
 
              float waveDuration = ApplyWaveDestruction(totalMatches);
@@ -1206,6 +1241,10 @@ public class BoardManager : MonoBehaviour
             var bonusMatches = grid.GetBonusArea(hitGo, hitGo2);
             if (bonusMatches.Count() > 0)
             {
+                if (!BonusTypeUtilities.ContainsFlies(f1.Bonus))
+                {
+                    TrackMissionPowerupUseFromBonusItem(f1);
+                }
                 totalMatches.AddRange(bonusMatches);
                 totalMatches.Add(hitGo); // Ensure bonus itself is destroyed
                 bonusTriggered = true;
@@ -1220,6 +1259,10 @@ public class BoardManager : MonoBehaviour
             var bonusMatches = grid.GetBonusArea(hitGo2, hitGo);
             if (bonusMatches.Count() > 0)
             {
+                if (!BonusTypeUtilities.ContainsFlies(f2.Bonus))
+                {
+                    TrackMissionPowerupUseFromBonusItem(f2);
+                }
                 totalMatches.AddRange(bonusMatches);
                 totalMatches.Add(hitGo2); // Ensure bonus itself is destroyed
                 bonusTriggered = true;
@@ -1316,10 +1359,13 @@ public class BoardManager : MonoBehaviour
 
             foreach (var item in totalMatches)
             {
+                var shape = item.GetComponent<FoodItem>();
+
+                TrackMissionCollected(shape);
+
                 // Check goals
                 if (levelGoals != null)
                 {
-                    var shape = item.GetComponent<FoodItem>();
                     foreach (var goal in levelGoals)
                     {
                         if (shape.Type.Contains(goal.TargetPrefabName))
@@ -1337,6 +1383,11 @@ public class BoardManager : MonoBehaviour
             {
                  if (BonusTypeUtilities.ContainsFlies(item.GetComponent<FoodItem>().Bonus))
                  {
+                      if (MissionProgressManager.Instance != null)
+                      {
+                          MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.FLIES);
+                          MissionProgressManager.Instance.OnTriggerBee();
+                      }
                       var target = GetFlyTarget(totalMatches.Union(fliesTargets));
                       if (target != null)
                        {
@@ -1475,11 +1526,70 @@ public class BoardManager : MonoBehaviour
     {
         score += amount;
         ShowScore();
+        if (MissionProgressManager.Instance != null)
+        {
+            MissionProgressManager.Instance.OnScorePoints(amount);
+        }
     }
 
     private void ShowScore()
     {
         if (uiManager != null) uiManager.UpdateScore(score);
+    }
+
+    private void TrackMissionCollected(FoodItem shape)
+    {
+        if (shape == null) return;
+        if (string.IsNullOrEmpty(shape.Type)) return;
+
+        string[] parts = shape.Type.Split('_');
+        string cleanType = parts.Length > 1 ? parts[1].ToUpper() : parts[0].ToUpper();
+
+        if (cleanType == "CHESSE") cleanType = "CHEESE";
+
+        FoodType foodType;
+        if (System.Enum.TryParse<FoodType>(cleanType, out foodType))
+        {
+            MissionProgressManager.Instance.OnItemCollected(foodType);
+        }
+    }
+
+    private void TrackMissionPowerupUseFromBonusItem(FoodItem bonusItem)
+    {
+        if (bonusItem == null) return;
+        if (MissionProgressManager.Instance == null) return;
+        if (bonusItem.Bonus == BonusType.None) return;
+
+        if (BonusTypeUtilities.ContainsOven(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.OVEN);
+        }
+
+        if (BonusTypeUtilities.ContainsPan(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.PAN);
+        }
+
+        if (BonusTypeUtilities.ContainsHorizontalKnife(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.KNIFE);
+            MissionProgressManager.Instance.OnClearRow();
+        }
+        else if (BonusTypeUtilities.ContainsVerticalKnife(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.KNIFE);
+            MissionProgressManager.Instance.OnClearColumn();
+        }
+        else if (BonusTypeUtilities.ContainsLinearKnife(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.KNIFE);
+        }
+
+        if (BonusTypeUtilities.ContainsFlies(bonusItem.Bonus))
+        {
+            MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.FLIES);
+            MissionProgressManager.Instance.OnTriggerBee();
+        }
     }
 
     private GameObject GetBonusFromType(string type, BonusType bonusType)
@@ -1733,6 +1843,7 @@ public class BoardManager : MonoBehaviour
             if (grid[row, col] != null) items.Add(grid[row, col]);
         }
         StartCoroutine(DestroyItemsRoutine(items, item));
+        if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnClearRow();
     }
 
     public void ApplyVerticalKnifePowerup(GameObject item)
@@ -1745,6 +1856,7 @@ public class BoardManager : MonoBehaviour
             if (grid[row, col] != null) items.Add(grid[row, col]);
         }
         StartCoroutine(DestroyItemsRoutine(items, item));
+        if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnClearColumn();
     }
 
     public void ApplyPanPowerup(GameObject item)
@@ -1792,6 +1904,7 @@ public class BoardManager : MonoBehaviour
         state = GameState.Animating;
         StopCheckForPotentialMatches();
         StartCoroutine(ActivateFliesRoutine(item));
+        if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnTriggerBee();
     }
 
     public void ApplyHatPowerup(GameObject item)

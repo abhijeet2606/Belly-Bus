@@ -76,18 +76,23 @@ public class PowerupManager : MonoBehaviour
         {
             case PowerupType.HorizontalKnife:
                 boardManager.ApplyHorizontalKnifePowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.KNIFE);
                 break;
             case PowerupType.VerticalKnife:
                 boardManager.ApplyVerticalKnifePowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.KNIFE);
                 break;
             case PowerupType.Pan:
                 boardManager.ApplyPanPowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.PAN);
                 break;
             case PowerupType.Oven:
                 boardManager.ApplyOvenPowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.OVEN);
                 break;
             case PowerupType.Flies:
                 boardManager.ApplyFliesPowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.FLIES);
                 break;
             case PowerupType.Blender:
                 boardManager.ApplyBlenderPowerup();

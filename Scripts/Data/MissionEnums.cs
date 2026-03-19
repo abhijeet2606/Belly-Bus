@@ -43,6 +43,8 @@ public enum FoodType
     ONION = 8402,
     TOMATO = 8403,
     LETTUCE = 8404,
+    FRIES = 8405,
+    PATTIES = 8406,
 }
 
 public enum PeriodType

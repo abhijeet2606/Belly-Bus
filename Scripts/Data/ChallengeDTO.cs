@@ -37,6 +37,7 @@ public class MissionsApiResponse
 {
     public bool success;
     public MissionsData data;
+    public ChallengeDTO[] challenges; // Added to support flat list response
 }
 
 [Serializable]

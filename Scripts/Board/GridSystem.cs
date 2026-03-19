@@ -468,8 +468,9 @@ public class GridSystem
         if (shape.Column != 0)
             for (int column = shape.Column - 1; column >= 0; column--)
             {
-                if (grid[shape.Row, column].GetComponent<FoodItem>().IsSameType(shape))
-                    matches.Add(grid[shape.Row, column]);
+                var gridItem = grid[shape.Row, column];
+                if (gridItem != null && gridItem.activeSelf && gridItem.GetComponent<FoodItem>().IsSameType(shape))
+                    matches.Add(gridItem);
                 else
                     break;
             }
@@ -478,8 +479,9 @@ public class GridSystem
         if (shape.Column != GameConstants.Columns - 1)
             for (int column = shape.Column + 1; column < GameConstants.Columns; column++)
             {
-                if (grid[shape.Row, column].GetComponent<FoodItem>().IsSameType(shape))
-                    matches.Add(grid[shape.Row, column]);
+                var gridItem = grid[shape.Row, column];
+                if (gridItem != null && gridItem.activeSelf && gridItem.GetComponent<FoodItem>().IsSameType(shape))
+                    matches.Add(gridItem);
                 else
                     break;
             }
@@ -500,10 +502,10 @@ public class GridSystem
         if (shape.Row != 0)
             for (int row = shape.Row - 1; row >= 0; row--)
             {
-                if (grid[row, shape.Column] != null &&
-                    grid[row, shape.Column].GetComponent<FoodItem>().IsSameType(shape))
+                var gridItem = grid[row, shape.Column];
+                if (gridItem != null && gridItem.activeSelf && gridItem.GetComponent<FoodItem>().IsSameType(shape))
                 {
-                    matches.Add(grid[row, shape.Column]);
+                    matches.Add(gridItem);
                 }
                 else
                     break;
@@ -513,10 +515,10 @@ public class GridSystem
         if (shape.Row != GameConstants.Rows - 1)
             for (int row = shape.Row + 1; row < GameConstants.Rows; row++)
             {
-                if (grid[row, shape.Column] != null && 
-                    grid[row, shape.Column].GetComponent<FoodItem>().IsSameType(shape))
+                var gridItem = grid[row, shape.Column];
+                if (gridItem != null && gridItem.activeSelf && gridItem.GetComponent<FoodItem>().IsSameType(shape))
                 {
-                    matches.Add(grid[row, shape.Column]);
+                    matches.Add(gridItem);
                 }
                 else
                     break;
