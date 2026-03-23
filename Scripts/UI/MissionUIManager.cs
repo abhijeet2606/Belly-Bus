@@ -831,28 +831,39 @@ public class MissionUIManager : MonoBehaviour
             }
         }
 
-        bool showDailyAllDone = ShouldShowDailyAllCompletedMessage();
-        SetDailyAllCompletedMessage(showDailyAllDone);
+        // Determine if we should show the "All Tasks Completed" message for the currently active tab
+        bool isDailyTab = DailyPanel != null && DailyPanel.activeInHierarchy;
+        bool isWeeklyTab = WeeklyPanel != null && WeeklyPanel.activeInHierarchy;
+        bool isMonthlyTab = MonthlyPanel != null && MonthlyPanel.activeInHierarchy;
 
-        if (showDailyAllDone)
+        bool showDailyDone = isDailyTab && ShouldShowDailyAllCompletedMessage();
+        bool showWeeklyDone = isWeeklyTab && (weeklyQueue == null || weeklyQueue.Count == 0 || weeklyQueue.All(c => IsMissionComplete(c)));
+        bool showMonthlyDone = isMonthlyTab && (monthlyQueue == null || monthlyQueue.Count == 0 || monthlyQueue.All(c => IsMissionComplete(c)));
+
+        bool showMessage = showDailyDone || showWeeklyDone || showMonthlyDone;
+        SetDailyAllCompletedMessage(showMessage);
+
+        if (showMessage)
         {
+            if (DailyAllCompletedText != null)
+            {
+                if (showDailyDone) DailyAllCompletedText.text = DailyAllCompletedMessageText;
+                else if (showWeeklyDone) DailyAllCompletedText.text = "All weekly tasks have been completed. Come back next week for more tasks.";
+                else if (showMonthlyDone) DailyAllCompletedText.text = "All monthly tasks have been completed. Come back next month for more tasks.";
+            }
+
             bool hasMessageUI = DailyAllCompletedMessage != null || DailyAllCompletedText != null;
             if (hasMessageUI)
             {
-                HideAllChildren(DailyTaskContainer);
+                if (showDailyDone) HideAllChildren(DailyTaskContainer);
+                else if (showWeeklyDone) HideAllChildren(WeeklyTaskContainer);
+                else if (showMonthlyDone) HideAllChildren(MonthlyTaskContainer);
             }
-            else
-            {
-                RefreshPanel(DailyTaskContainer, dailyQueue, true);
-            }
-        }
-        else
-        {
-            RefreshPanel(DailyTaskContainer, dailyQueue, false);
         }
 
-        RefreshPanel(WeeklyTaskContainer, weeklyQueue, true);
-        RefreshPanel(MonthlyTaskContainer, monthlyQueue, true);
+        RefreshPanel(DailyTaskContainer, dailyQueue, !showDailyDone);
+        RefreshPanel(WeeklyTaskContainer, weeklyQueue, !showWeeklyDone);
+        RefreshPanel(MonthlyTaskContainer, monthlyQueue, !showMonthlyDone);
     }
 
     private List<ChallengeDTO> GetVisibleMissions(List<ChallengeDTO> queue)
@@ -953,7 +964,6 @@ public class MissionUIManager : MonoBehaviour
     private void SetDailyAllCompletedMessage(bool show)
     {
         if (DailyAllCompletedMessage != null) DailyAllCompletedMessage.SetActive(show);
-        if (show && DailyAllCompletedText != null) DailyAllCompletedText.text = DailyAllCompletedMessageText;
     }
 
     private void HideAllChildren(Transform container)
@@ -1164,6 +1174,8 @@ public class MissionUIManager : MonoBehaviour
         UpdateTabVisuals(DailyTabButton, true);
         UpdateTabVisuals(WeeklyTabButton, false);
         UpdateTabVisuals(MonthlyTabButton, false);
+
+        RefreshAllPanels(); // Ensure the completion message is correctly toggled for this tab
     }
 
     public void ShowWeeklyTab()
@@ -1176,6 +1188,8 @@ public class MissionUIManager : MonoBehaviour
         UpdateTabVisuals(DailyTabButton, false);
         UpdateTabVisuals(WeeklyTabButton, true);
         UpdateTabVisuals(MonthlyTabButton, false);
+
+        RefreshAllPanels(); // Ensure the completion message is correctly toggled for this tab
     }
 
     public void ShowMonthlyTab()
@@ -1188,6 +1202,8 @@ public class MissionUIManager : MonoBehaviour
         UpdateTabVisuals(DailyTabButton, false);
         UpdateTabVisuals(WeeklyTabButton, false);
         UpdateTabVisuals(MonthlyTabButton, true);
+
+        RefreshAllPanels(); // Ensure the completion message is correctly toggled for this tab
     }
 
     private void SetPanelActive(GameObject panel, bool active)
