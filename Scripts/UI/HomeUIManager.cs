@@ -481,7 +481,8 @@ public class HomeUIManager : MonoBehaviour
                     powerups.blender,
                     powerups.horizontalKnife,
                     powerups.verticalKnife,
-                    powerups.flies
+                    powerups.flies,
+                    powerups.hammer
                 );
             }
 
@@ -544,6 +545,7 @@ public class HomeUIManager : MonoBehaviour
         public int horizontalKnife;
         public int verticalKnife;
         public int flies;
+        public int hammer;
     }
 
     private static PowerupCounts GetPowerups(UserDto user, string rawJson)
@@ -555,7 +557,8 @@ public class HomeUIManager : MonoBehaviour
             blender = -1,
             horizontalKnife = -1,
             verticalKnife = -1,
-            flies = -1
+            flies = -1,
+            hammer = -1
         };
 
         if (user != null)
@@ -569,6 +572,7 @@ public class HomeUIManager : MonoBehaviour
                 r.oven = p.Oven;
                 r.flies = p.Flies;
                 r.blender = p.Blender;
+                r.hammer = p.Hammer;
             }
             else
             {
@@ -576,6 +580,7 @@ public class HomeUIManager : MonoBehaviour
                 r.oven = user.oven;
                 r.blender = user.blender;
                 r.verticalKnife = user.verticalKnife;
+                r.hammer = user.hammer;
             }
         }
 
@@ -585,11 +590,13 @@ public class HomeUIManager : MonoBehaviour
             int oven = TryGetJsonInt(rawJson, "oven");
             int blender = TryGetJsonInt(rawJson, "blender");
             int verticalKnife = TryGetJsonInt(rawJson, "verticalKnife");
+            int hammer = TryGetJsonInt(rawJson, "hammer");
 
             if (pan >= 0) r.pan = pan;
             if (blender >= 0) r.blender = blender;
             if (verticalKnife >= 0) r.verticalKnife = verticalKnife;
             if (oven >= 0) r.oven = oven;
+            if (hammer >= 0) r.hammer = hammer;
         }
 
         return r;
@@ -871,6 +878,7 @@ public class HomeUIManager : MonoBehaviour
         public int blender = -1;
         public int verticalKnife = -1;
         public int hat = -1;
+        public int hammer = -1;
         public int KetchUp = -1;
 
         public PowerupsDto powerups;
@@ -886,6 +894,7 @@ public class HomeUIManager : MonoBehaviour
         public int Oven = -1;
         public int Flies = -1;
         public int Blender = -1;
+        public int Hammer = -1;
     }
 
     [Serializable]
@@ -1023,7 +1032,7 @@ public class HomeUIManager : MonoBehaviour
     public void OnResetButton()
     {
         if (isBlocked) return;
-        ProgressDataManager.EnsureInstance().OverwriteFromServer(1, -1, -1, -1, -1, -1, -1, -1);
+        ProgressDataManager.EnsureInstance().OverwriteFromServer(1, -1, -1, -1, -1, -1, -1, -1, -1);
         UpdateLevelUI();
         Debug.Log("Progress reset to Level 1");
     }

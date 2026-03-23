@@ -1918,6 +1918,16 @@ public class BoardManager : MonoBehaviour
         ShuffleBoard();
     }
 
+    public void ApplyHammerPowerup(GameObject item)
+    {
+        // Destroys only the single touched item
+        if (item == null) return;
+        List<GameObject> items = new List<GameObject> { item };
+        StartCoroutine(DestroyItemsRoutine(items, item));
+        // Optional: Mission progress for hammer if needed
+        // if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnHammerUsed();
+    }
+
     private float ApplyWaveDestruction(List<GameObject> items, GameObject centerItem = null)
     {
         if (items == null || items.Count == 0) return 0f;

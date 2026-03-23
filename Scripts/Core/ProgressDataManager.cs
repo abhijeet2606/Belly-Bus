@@ -25,6 +25,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         public int horizontalKnife = 0;
         public int verticalKnife = 0;
         public int flies = 0;
+        public int hammer = 0;
     }
 
     private enum SyncEventType
@@ -72,6 +73,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         public int horizontalKnife;
         public int verticalKnife;
         public int flies;
+        public int hammer;
     }
 
     [Serializable]
@@ -108,6 +110,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         public int horizontalKnife = -1;
         public int verticalKnife = -1;
         public int flies = -1;
+        public int hammer = -1;
     }
 
     public string ApiBaseUrl = "https://apigame.blazemobilestudio.com/api";
@@ -217,6 +220,7 @@ public sealed class ProgressDataManager : MonoBehaviour
                 case "Powerup_HorizontalKnife": return bundle.snapshot.horizontalKnife;
                 case "Powerup_VerticalKnife": return bundle.snapshot.verticalKnife;
                 case "Powerup_Flies": return bundle.snapshot.flies;
+                case "Powerup_Hammer": return bundle.snapshot.hammer;
                 default: return 0;
             }
         }
@@ -306,6 +310,7 @@ public sealed class ProgressDataManager : MonoBehaviour
                 case "Powerup_HorizontalKnife": bundle.snapshot.horizontalKnife = next; break;
                 case "Powerup_VerticalKnife": bundle.snapshot.verticalKnife = next; break;
                 case "Powerup_Flies": bundle.snapshot.flies = next; break;
+                case "Powerup_Hammer": bundle.snapshot.hammer = next; break;
                 default: return;
             }
 
@@ -350,7 +355,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         return true;
     }
 
-    public void OverwriteFromServer(int level, int coins, int oven, int pan, int blender, int horizontalKnife, int verticalKnife, int flies)
+    public void OverwriteFromServer(int level, int coins, int oven, int pan, int blender, int horizontalKnife, int verticalKnife, int flies, int hammer)
     {
         lock (gate)
         {
@@ -365,6 +370,7 @@ public sealed class ProgressDataManager : MonoBehaviour
             if (horizontalKnife >= 0) bundle.serverSnapshot.horizontalKnife = horizontalKnife;
             if (verticalKnife >= 0) bundle.serverSnapshot.verticalKnife = verticalKnife;
             if (flies >= 0) bundle.serverSnapshot.flies = flies;
+            if (hammer >= 0) bundle.serverSnapshot.hammer = hammer;
 
             bundle.hasServerSnapshot = true;
 
@@ -376,6 +382,7 @@ public sealed class ProgressDataManager : MonoBehaviour
                 bundle.snapshot.horizontalKnife = Math.Min(bundle.snapshot.horizontalKnife, bundle.serverSnapshot.horizontalKnife);
                 bundle.snapshot.verticalKnife = Math.Min(bundle.snapshot.verticalKnife, bundle.serverSnapshot.verticalKnife);
                 bundle.snapshot.flies = Math.Min(bundle.snapshot.flies, bundle.serverSnapshot.flies);
+                bundle.snapshot.hammer = Math.Min(bundle.snapshot.hammer, bundle.serverSnapshot.hammer);
             }
 
             if (bundle.queue == null || bundle.queue.Count == 0)
@@ -475,6 +482,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         int horizontalKnifeDelta = 0;
         int verticalKnifeDelta = 0;
         int fliesDelta = 0;
+        int hammerDelta = 0;
 
         lock (gate)
         {
@@ -486,6 +494,7 @@ public sealed class ProgressDataManager : MonoBehaviour
                 horizontalKnifeDelta = e.snapshot.horizontalKnife - bundle.serverSnapshot.horizontalKnife;
                 verticalKnifeDelta = e.snapshot.verticalKnife - bundle.serverSnapshot.verticalKnife;
                 fliesDelta = e.snapshot.flies - bundle.serverSnapshot.flies;
+                hammerDelta = e.snapshot.hammer - bundle.serverSnapshot.hammer;
             }
         }
 
@@ -523,7 +532,8 @@ public sealed class ProgressDataManager : MonoBehaviour
             blender = blenderDelta,
             horizontalKnife = horizontalKnifeDelta,
             verticalKnife = verticalKnifeDelta,
-            flies = fliesDelta
+            flies = fliesDelta,
+            hammer = hammerDelta
         };
 
         string json = JsonUtility.ToJson(payload);

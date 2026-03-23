@@ -11,12 +11,22 @@ public enum PowerupType
     Oven,            // Acts as a Color Bomb - destroys all items of one color
     Flies,           // The remote target bonus
     Blender,         // Shuffle Board
+    Hammer,          // Behavior to be implemented later
 }
 
 public class PowerupManager : MonoBehaviour
 {
     public BoardManager boardManager;
-    public PowerupType currentActivePowerup = PowerupType.None;
+    private PowerupType _currentActivePowerup = PowerupType.None;
+    public PowerupType currentActivePowerup 
+    {
+        get => _currentActivePowerup;
+        set {
+            _currentActivePowerup = value;
+            OnPowerupStateChanged?.Invoke();
+        }
+    }
+    public event System.Action OnPowerupStateChanged;
     private float deselectBlockWindow = 0.08f;
     private float deselectBlockEndTime = 0f;
 
@@ -97,6 +107,9 @@ public class PowerupManager : MonoBehaviour
             case PowerupType.Blender:
                 boardManager.ApplyBlenderPowerup();
                 break;
+            case PowerupType.Hammer:
+                boardManager.ApplyHammerPowerup(target);
+                break;
         }
 
         ConsumeLocalPowerup(currentActivePowerup, 1);
@@ -133,6 +146,8 @@ public class PowerupManager : MonoBehaviour
                 return "Powerup_Flies";
             case PowerupType.Blender:
                 return "Powerup_Blender";
+            case PowerupType.Hammer:
+                return "Powerup_Hammer";
             default:
                 return null;
         }
