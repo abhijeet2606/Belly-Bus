@@ -1116,8 +1116,40 @@ public class BoardManager : MonoBehaviour
                  columns = totalMatches.Select(go => go.GetComponent<FoodItem>().Column).Distinct().ToList();
              }
 
+             // Check for bonus creation from these matches BEFORE destroying them
+             List<(FoodItem anchor, BonusType type)> bonusesToCreate = new List<(FoodItem, BonusType)>();
+             HashSet<GameObject> itemsHandledForBonus = new HashSet<GameObject>();
+
+             foreach (var item in totalMatches)
+             {
+                 if (item == null || itemsHandledForBonus.Contains(item)) continue;
+
+                 var info = grid.GetMatches(item);
+                 if (info.MatchedFood.Count() >= GameConstants.MinimumMatches)
+                 {
+                     BonusType bt = grid.AnalyzeMatchShape(item);
+                     // Only create a bonus if the match doesn't already contain one
+                     if (bt != BonusType.None && info.BonusesContained == BonusType.None)
+                     {
+                         bonusesToCreate.Add((item.GetComponent<FoodItem>(), bt));
+                         foreach (var m in info.MatchedFood) itemsHandledForBonus.Add(m);
+                     }
+                     else
+                     {
+                         // Mark these items as handled even if no bonus created
+                         foreach (var m in info.MatchedFood) itemsHandledForBonus.Add(m);
+                     }
+                 }
+             }
+
              float waveDuration = ApplyWaveDestruction(totalMatches);
              if (waveDuration > 0f) yield return new WaitForSeconds(waveDuration + 0.3f);
+
+             // Create the bonuses at the anchor positions
+             foreach (var b in bonusesToCreate)
+             {
+                 if (b.anchor != null) CreateBonus(b.anchor, b.type);
+             }
 
             if (CheckWinCondition())
             {
@@ -1923,6 +1955,7 @@ public class BoardManager : MonoBehaviour
         // Destroys only the single touched item
         if (item == null) return;
         List<GameObject> items = new List<GameObject> { item };
+        // Pass item as centerItem so it triggers the powerup burst in the animation manager
         StartCoroutine(DestroyItemsRoutine(items, item));
         // Optional: Mission progress for hammer if needed
         // if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnHammerUsed();
@@ -1987,7 +2020,18 @@ public class BoardManager : MonoBehaviour
 
         yield return new WaitForSeconds(GameConstants.MoveAnimationMinDuration * maxDistance);
 
-        state = GameState.None;
-        StartCheckForPotentialMatches();
+        // After hammer or powerup hit, check for new matches formed by the collapse
+        var chainedMatches = grid.GetMatches(collapsedCandyInfo.AlteredFood)
+                         .Union(grid.GetMatches(newCandyInfo.AlteredFood)).Distinct().ToList();
+
+        if (chainedMatches.Count > 0)
+        {
+            yield return StartCoroutine(ProcessMatchesChain(chainedMatches));
+        }
+        else
+        {
+            state = GameState.None;
+            StartCheckForPotentialMatches();
+        }
     }
 }

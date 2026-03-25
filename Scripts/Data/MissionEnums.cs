@@ -27,6 +27,8 @@ public enum MissionPowerupType
     PAN = 8201,
     OVEN = 8202,
     FLIES = 8203,
+    HAMMER = 8204,
+    BLENDER = 8205,
 }
 
 public enum MissionEntityType

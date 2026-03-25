@@ -489,7 +489,7 @@ public class HomeUIManager : MonoBehaviour
             PlayerPrefs.Save();
             UpdateLevelUI();
             UpdateBoosterCountUI();
-            Debug.Log($"ContinueWithDevice success. isNewUser={resp.isNewUser} deviceId={deviceId} userId={PlayerPrefs.GetString("UserId","")} level={PlayerPrefs.GetInt("CurrentLevel", 1)} coins={PlayerPrefs.GetInt("TotalCoins", 0)} powerups(oven={PlayerPrefs.GetInt("Powerup_Oven", 0)} pan={PlayerPrefs.GetInt("Powerup_Pan", 0)} knifeV={PlayerPrefs.GetInt("Powerup_VerticalKnife", 0)} blender={PlayerPrefs.GetInt("Powerup_Blender", 0)})");
+            Debug.Log($"ContinueWithDevice success. isNewUser={resp.isNewUser} deviceId={deviceId} userId={PlayerPrefs.GetString("UserId","")} level={PlayerPrefs.GetInt("CurrentLevel", 1)} coins={PlayerPrefs.GetInt("TotalCoins", 0)} powerups(oven={PlayerPrefs.GetInt("Powerup_Oven", 0)} pan={PlayerPrefs.GetInt("Powerup_Pan", 0)} knifeV={PlayerPrefs.GetInt("Powerup_VerticalKnife", 0)} knifeH={PlayerPrefs.GetInt("Powerup_HorizontalKnife", 0)} hammer={PlayerPrefs.GetInt("Powerup_Hammer", 0)} blender={PlayerPrefs.GetInt("Powerup_Blender", 0)})");
         }
     }
 
@@ -580,6 +580,7 @@ public class HomeUIManager : MonoBehaviour
                 r.oven = user.oven;
                 r.blender = user.blender;
                 r.verticalKnife = user.verticalKnife;
+                r.horizontalKnife = user.horizontalKnife;
                 r.hammer = user.hammer;
             }
         }
@@ -590,11 +591,13 @@ public class HomeUIManager : MonoBehaviour
             int oven = TryGetJsonInt(rawJson, "oven");
             int blender = TryGetJsonInt(rawJson, "blender");
             int verticalKnife = TryGetJsonInt(rawJson, "verticalKnife");
+            int horizontalKnife = TryGetJsonInt(rawJson, "horizontalKnife");
             int hammer = TryGetJsonInt(rawJson, "hammer");
 
             if (pan >= 0) r.pan = pan;
             if (blender >= 0) r.blender = blender;
             if (verticalKnife >= 0) r.verticalKnife = verticalKnife;
+            if (horizontalKnife >= 0) r.horizontalKnife = horizontalKnife;
             if (oven >= 0) r.oven = oven;
             if (hammer >= 0) r.hammer = hammer;
         }
@@ -879,6 +882,7 @@ public class HomeUIManager : MonoBehaviour
         public int verticalKnife = -1;
         public int hat = -1;
         public int hammer = -1;
+        public int horizontalKnife = -1;
         public int KetchUp = -1;
 
         public PowerupsDto powerups;
@@ -954,8 +958,8 @@ public class HomeUIManager : MonoBehaviour
     public void OnPlayButton()
     {
         if (isBlocked) return;
-        // int lives = GetCurrentLife();
-        // if (lives <= 0) return;
+        int lives = GetCurrentLife();
+        if (lives <= 0) return;
         if (ShouldBlockPlayForOfflineLevel())
         {
             SetInternetConnectivityPanelVisible(true);
@@ -1025,6 +1029,9 @@ public class HomeUIManager : MonoBehaviour
 
         if (b.Equals("Blender", StringComparison.OrdinalIgnoreCase))
             return "Powerup_Blender";
+
+        if (b.Equals("Hammer", StringComparison.OrdinalIgnoreCase))
+            return "Powerup_Hammer";
 
         return null;
     }

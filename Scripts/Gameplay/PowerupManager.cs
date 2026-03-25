@@ -106,9 +106,11 @@ public class PowerupManager : MonoBehaviour
                 break;
             case PowerupType.Blender:
                 boardManager.ApplyBlenderPowerup();
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.BLENDER);
                 break;
             case PowerupType.Hammer:
                 boardManager.ApplyHammerPowerup(target);
+                if (MissionProgressManager.Instance != null) MissionProgressManager.Instance.OnPowerupUsed(MissionPowerupType.HAMMER);
                 break;
         }
 

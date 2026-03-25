@@ -376,13 +376,16 @@ public sealed class ProgressDataManager : MonoBehaviour
 
             if (bundle.snapshot != null && bundle.serverSnapshot != null)
             {
-                bundle.snapshot.oven = Math.Min(bundle.snapshot.oven, bundle.serverSnapshot.oven);
-                bundle.snapshot.pan = Math.Min(bundle.snapshot.pan, bundle.serverSnapshot.pan);
-                bundle.snapshot.blender = Math.Min(bundle.snapshot.blender, bundle.serverSnapshot.blender);
-                bundle.snapshot.horizontalKnife = Math.Min(bundle.snapshot.horizontalKnife, bundle.serverSnapshot.horizontalKnife);
-                bundle.snapshot.verticalKnife = Math.Min(bundle.snapshot.verticalKnife, bundle.serverSnapshot.verticalKnife);
-                bundle.snapshot.flies = Math.Min(bundle.snapshot.flies, bundle.serverSnapshot.flies);
-                bundle.snapshot.hammer = Math.Min(bundle.snapshot.hammer, bundle.serverSnapshot.hammer);
+                // We should trust the server value if it's higher (e.g. bought on another device)
+                // OR if there are no pending local changes.
+                // For safety, if local is 0 and server has items, we take the server items.
+                bundle.snapshot.oven = Math.Max(bundle.snapshot.oven, bundle.serverSnapshot.oven);
+                bundle.snapshot.pan = Math.Max(bundle.snapshot.pan, bundle.serverSnapshot.pan);
+                bundle.snapshot.blender = Math.Max(bundle.snapshot.blender, bundle.serverSnapshot.blender);
+                bundle.snapshot.horizontalKnife = Math.Max(bundle.snapshot.horizontalKnife, bundle.serverSnapshot.horizontalKnife);
+                bundle.snapshot.verticalKnife = Math.Max(bundle.snapshot.verticalKnife, bundle.serverSnapshot.verticalKnife);
+                bundle.snapshot.flies = Math.Max(bundle.snapshot.flies, bundle.serverSnapshot.flies);
+                bundle.snapshot.hammer = Math.Max(bundle.snapshot.hammer, bundle.serverSnapshot.hammer);
             }
 
             if (bundle.queue == null || bundle.queue.Count == 0)
@@ -394,7 +397,7 @@ public sealed class ProgressDataManager : MonoBehaviour
         }
 
         PublishAll();
-        if (Log) Debug.Log($"[Progress] Server overwrite. level={level} coins={coins} oven={oven} pan={pan} blender={blender} hKnife={horizontalKnife} vKnife={verticalKnife} flies={flies}");
+        if (Log) Debug.Log($"[Progress] Server overwrite. level={level} coins={coins} oven={oven} pan={pan} blender={blender} hKnife={horizontalKnife} vKnife={verticalKnife} flies={flies} hammer={hammer}");
     }
 
     public void TrySyncNow()
@@ -622,6 +625,7 @@ public sealed class ProgressDataManager : MonoBehaviour
                 if (resp.data.inventory.horizontalKnife >= 0) bundle.serverSnapshot.horizontalKnife = resp.data.inventory.horizontalKnife;
                 if (resp.data.inventory.verticalKnife >= 0) bundle.serverSnapshot.verticalKnife = resp.data.inventory.verticalKnife;
                 if (resp.data.inventory.flies >= 0) bundle.serverSnapshot.flies = resp.data.inventory.flies;
+                if (resp.data.inventory.hammer >= 0) bundle.serverSnapshot.hammer = resp.data.inventory.hammer;
             }
 
             SaveBundleLocked();
@@ -830,7 +834,8 @@ public sealed class ProgressDataManager : MonoBehaviour
             blender = s.blender,
             horizontalKnife = s.horizontalKnife,
             verticalKnife = s.verticalKnife,
-            flies = s.flies
+            flies = s.flies,
+            hammer = s.hammer
         };
     }
 
@@ -869,7 +874,8 @@ public sealed class ProgressDataManager : MonoBehaviour
             blender = PlayerPrefs.GetInt("Powerup_Blender", 0),
             horizontalKnife = PlayerPrefs.GetInt("Powerup_HorizontalKnife", 0),
             verticalKnife = PlayerPrefs.GetInt("Powerup_VerticalKnife", 0),
-            flies = PlayerPrefs.GetInt("Powerup_Flies", 0)
+            flies = PlayerPrefs.GetInt("Powerup_Flies", 0),
+            hammer = PlayerPrefs.GetInt("Powerup_Hammer", 0)
         };
     }
 
@@ -885,5 +891,6 @@ public sealed class ProgressDataManager : MonoBehaviour
         PlayerPrefs.SetInt("Powerup_HorizontalKnife", Math.Max(0, s.horizontalKnife));
         PlayerPrefs.SetInt("Powerup_VerticalKnife", Math.Max(0, s.verticalKnife));
         PlayerPrefs.SetInt("Powerup_Flies", Math.Max(0, s.flies));
+        PlayerPrefs.SetInt("Powerup_Hammer", Math.Max(0, s.hammer));
     }
 }

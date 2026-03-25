@@ -738,6 +738,16 @@ public class MissionUIManager : MonoBehaviour
                     challenge.entity = (int)MissionPowerupType.FLIES;
                     return;
                 }
+                if (titleUpper.Contains("HAMMER"))
+                {
+                    challenge.entity = (int)MissionPowerupType.HAMMER;
+                    return;
+                }
+                if (titleUpper.Contains("BLENDER"))
+                {
+                    challenge.entity = (int)MissionPowerupType.BLENDER;
+                    return;
+                }
 
                 challenge.entityType = MissionEntityType.NONE;
                 challenge.entity = 0;

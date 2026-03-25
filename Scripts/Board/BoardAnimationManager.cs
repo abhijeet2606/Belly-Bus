@@ -27,6 +27,7 @@ public class BoardAnimationManager : MonoBehaviour
     public string PopFXKey = "fx_pop_small";
     public string SweepFXKey = "fx_row_sweep";
     public string BombFXKey = "fx_bomb_big";
+    public string HammerFXKey = "fx_bomb_big"; // Reuse big bomb or a specific hammer burst
     public string PanSwapFXKey = "fx_pan_swap";
     public string OvenSwapFXKey = "fx_oven_swap";
     public string KnifeSwapFXKey = "fx_knife_swap";
@@ -108,6 +109,11 @@ public class BoardAnimationManager : MonoBehaviour
             if (isColorBomb && !string.IsNullOrEmpty(BombFXKey))
             {
                 centerFx.Play(BombFXKey, centerItem.transform.position, null, 1.2f);
+            }
+            else if (items.Count == 1 && !string.IsNullOrEmpty(HammerFXKey))
+            {
+                // Single item powerup (Hammer) gets a specific burst
+                centerFx.Play(HammerFXKey, centerItem.transform.position, null, 1.0f);
             }
             else if (isLinear && !string.IsNullOrEmpty(SweepFXKey))
             {
@@ -210,7 +216,10 @@ public class BoardAnimationManager : MonoBehaviour
 
         Sequence s = DOTween.Sequence();
 
-        if (isPowerup)
+        // If it's a single-item powerup (like a Hammer), we want an instant smash, not a popup cycle
+        bool isSmash = isPowerup && delay == 0f && holdTime == 0f;
+
+        if (isPowerup && !isSmash)
         {
             // Powerup Style: Pop up -> Wait -> Vanish
             if (delay > 0f) s.AppendInterval(delay);
@@ -221,8 +230,7 @@ public class BoardAnimationManager : MonoBehaviour
         }
         else
         {
-            // Regular Style: Just shrink/fade immediately
-            // No delay, no popup
+            // Regular Style or Smash: Just shrink/fade immediately
             s.Append(item.transform.DOScale(0f, regularScaleDuration));
             if (sr != null) s.Join(sr.DOFade(0f, regularFadeDuration));
         }
