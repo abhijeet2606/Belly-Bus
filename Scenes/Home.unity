@@ -11291,11 +11291,11 @@ MonoBehaviour:
   useUnityFallbackBanner: 0
   useTestAds: 0
   useAdaptiveBanner: 0
-  androidAppId: ca-app-pub-4650825417220512~6192967000
-  androidBannerId: ca-app-pub-4650825417220512/2995958028
-  androidInterstitialId: ca-app-pub-4650825417220512/4440901632
-  androidRewardedId: ca-app-pub-4650825417220512/9860749278
-  androidLongRewardedId: ca-app-pub-4650825417220512/2173830948
+  androidAppId: ca-app-pub-4650825417220512~3692549212
+  androidBannerId: ca-app-pub-4650825417220512/3893835557
+  androidInterstitialId: ca-app-pub-4650825417220512/7923438266
+  androidRewardedId: ca-app-pub-4650825417220512/5995066893
+  androidLongRewardedId: ca-app-pub-4650825417220512/3984193255
   iosAppId: 
   iosBannerId: 
   iosInterstitialId: 
