@@ -1388,6 +1388,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 114633918}
   m_CullTransparentMesh: 1
+--- !u!1 &128950470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 128950471}
+  - component: {fileID: 128950473}
+  - component: {fileID: 128950472}
+  m_Layer: 5
+  m_Name: Red Icons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &128950471
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128950470}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 273862155}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 24.3406, y: 33.12}
+  m_SizeDelta: {x: 35, y: 35}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &128950472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128950470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -8699012174443432173, guid: 9921f3283d4984948b53beffeac7b93f,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &128950473
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128950470}
+  m_CullTransparentMesh: 1
 --- !u!1 &143352156
 GameObject:
   m_ObjectHideFlags: 0
@@ -2317,6 +2393,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 128950471}
   - {fileID: 1556119082}
   m_Father: {fileID: 637714385}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2678,7 +2755,7 @@ PrefabInstance:
     - target: {fileID: 3715062030569053847, guid: 5f0865f4cc2e6a4478380d690659aefb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -142.87
+      value: -355.4
       objectReference: {fileID: 0}
     - target: {fileID: 3715062030569053847, guid: 5f0865f4cc2e6a4478380d690659aefb,
         type: 3}
@@ -2695,25 +2772,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3921030339008480725, guid: 5f0865f4cc2e6a4478380d690659aefb,
-        type: 3}
-      propertyPath: m_Interactable
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4374001410524361707, guid: 5f0865f4cc2e6a4478380d690659aefb,
         type: 3}
       propertyPath: m_Name
       value: Task
       objectReference: {fileID: 0}
-    - target: {fileID: 4374001410524361707, guid: 5f0865f4cc2e6a4478380d690659aefb,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5662798700548932525, guid: 5f0865f4cc2e6a4478380d690659aefb,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7188184112025783633, guid: 5f0865f4cc2e6a4478380d690659aefb,
+        type: 3}
+      propertyPath: m_Text
+      value: 1/5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3837,18 +3909,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1548626313}
-        m_TargetAssemblyTypeName: GoogleAdsManager, Assembly-CSharp
-        m_MethodName: ShowInterstitialFromButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &426571450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4298,18 +4358,6 @@ MonoBehaviour:
       - m_Target: {fileID: 1258238193}
         m_TargetAssemblyTypeName: MissionUIManager, Assembly-CSharp
         m_MethodName: ShowWeeklyTab
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1548626313}
-        m_TargetAssemblyTypeName: GoogleAdsManager, Assembly-CSharp
-        m_MethodName: ShowInterstitialFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8386,6 +8434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7358b2f30e5d6ae41969825a8e8536cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomeUIManager
+  missionNotificationIcon: {fileID: 128950470}
   LevelText: {fileID: 1277213063}
   LevelText2: {fileID: 1240651421}
   CoinsText: {fileID: 1833904828}
@@ -8417,6 +8466,8 @@ MonoBehaviour:
   LeaderboardUserTrophiesText: {fileID: 0}
   LeaderboardUserAvatarImage: {fileID: 0}
   ErrorText: {fileID: 31972147}
+  leaderboardScrollRect: {fileID: 1719048530}
+  scrollDuration: 0.5
 --- !u!1 &1071778205
 GameObject:
   m_ObjectHideFlags: 0
@@ -9447,14 +9498,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4775020343600745654, guid: 6266f85342adfcc4aab14481d3318089,
+  m_Sprite: {fileID: 1693325352685635598, guid: beb87f740ad755d448dc9892ab8c9066,
     type: 3}
   m_Type: 0
   m_PreserveAspect: 0
@@ -9761,18 +9812,6 @@ MonoBehaviour:
       - m_Target: {fileID: 1258238193}
         m_TargetAssemblyTypeName: MissionUIManager, Assembly-CSharp
         m_MethodName: ShowDailyTab
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1548626313}
-        m_TargetAssemblyTypeName: GoogleAdsManager, Assembly-CSharp
-        m_MethodName: ShowInterstitialFromButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10215,7 +10254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1364354589
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11377,14 +11416,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4775020343600745654, guid: 6266f85342adfcc4aab14481d3318089,
+  m_Sprite: {fileID: 1693325352685635598, guid: beb87f740ad755d448dc9892ab8c9066,
     type: 3}
   m_Type: 0
   m_PreserveAspect: 0

@@ -318,7 +318,7 @@ public class MissionUIManager : MonoBehaviour
         return b + "/" + p;
     }
 
-    private static string SanitizeMissionsJson(string json)
+    public static string SanitizeMissionsJson(string json)
     {
         if (string.IsNullOrEmpty(json)) return json;
         return Regex.Replace(json, "\"entity\"\\s*:\\s*null", "\"entity\":0");
@@ -448,7 +448,7 @@ public class MissionUIManager : MonoBehaviour
         return ReadCachedMissionsJsonStatic();
     }
 
-    private static string ReadCachedMissionsJsonStatic()
+    public static string ReadCachedMissionsJsonStatic()
     {
         try
         {

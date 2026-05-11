@@ -458,4 +458,81 @@ public class MissionProgressManager : MonoBehaviour
             return false;
         }
     }
+
+    public bool HasUnclaimedMissions()
+    {
+        string cachedJson = MissionUIManager.ReadCachedMissionsJsonStatic();
+        if (string.IsNullOrEmpty(cachedJson)) return false;
+
+        try
+        {
+            string sanitized = MissionUIManager.SanitizeMissionsJson(cachedJson);
+            MissionsApiResponse response = JsonUtility.FromJson<MissionsApiResponse>(sanitized);
+            if (response == null) return false;
+
+            if (response.data != null)
+            {
+                if (response.data.daily != null && response.data.daily.days != null)
+                {
+                    foreach (var day in response.data.daily.days)
+                    {
+                        if (day.challenges == null) continue;
+                        foreach (var ch in day.challenges)
+                        {
+                            if (IsUnclaimedAndCompleted(ch)) return true;
+                        }
+                    }
+                }
+
+                if (response.data.weekly != null && response.data.weekly.days != null)
+                {
+                    foreach (var day in response.data.weekly.days)
+                    {
+                        if (day.challenges == null) continue;
+                        foreach (var ch in day.challenges)
+                        {
+                            if (IsUnclaimedAndCompleted(ch)) return true;
+                        }
+                    }
+                }
+
+                if (response.data.monthly != null && response.data.monthly.days != null)
+                {
+                    foreach (var day in response.data.monthly.days)
+                    {
+                        if (day.challenges == null) continue;
+                        foreach (var ch in day.challenges)
+                        {
+                            if (IsUnclaimedAndCompleted(ch)) return true;
+                        }
+                    }
+                }
+            }
+
+            if (response.challenges != null && response.challenges.Length > 0)
+            {
+                foreach (var ch in response.challenges)
+                {
+                    if (IsUnclaimedAndCompleted(ch)) return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("[Mission] Error checking unclaimed missions: " + ex.Message);
+        }
+
+        return false;
+    }
+
+    private bool IsUnclaimedAndCompleted(ChallengeDTO challenge)
+    {
+        if (challenge == null || string.IsNullOrEmpty(challenge.challengeId)) return false;
+
+        bool isClaimed = PlayerPrefs.HasKey("MissionClaimed_" + challenge.challengeId);
+        if (isClaimed) return false;
+
+        int progress = GetChallengeProgress(challenge.challengeId);
+        return progress >= challenge.target;
+    }
 }

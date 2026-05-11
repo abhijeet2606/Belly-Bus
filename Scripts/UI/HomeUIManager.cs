@@ -19,6 +19,8 @@ public class HomeUIManager : MonoBehaviour
     private const int MaxLife = 5;
     private const int LifeRegenSeconds = 15 * 60;
 
+    [Header("Mission Notification")]
+    public GameObject missionNotificationIcon;
     public Text LevelText, LevelText2;
     public Text CoinsText;
     [FormerlySerializedAs("LivesText")]
@@ -49,6 +51,12 @@ public class HomeUIManager : MonoBehaviour
     public Text LeaderboardUserTrophiesText;
     public Image LeaderboardUserAvatarImage;
     public GameObject ErrorText;
+
+    [Header("Leaderboard Scroll")]
+    public UnityEngine.UI.ScrollRect leaderboardScrollRect;
+    public float scrollDuration = 0.5f;
+
+
 
     // Track selected boosters
     private System.Collections.Generic.List<string> selectedBoosters = new System.Collections.Generic.List<string>();
@@ -83,6 +91,17 @@ public class HomeUIManager : MonoBehaviour
         SetLeaderboardVisible(false);
         LoadLeaderboardFromLocalCache();
         BootstrapLeaderboardOnce();
+
+        if (MissionProgressManager.Instance != null)
+        {
+            MissionProgressManager.Instance.OnAnyProgressChanged -= UpdateMissionNotification;
+            MissionProgressManager.Instance.OnAnyProgressChanged += UpdateMissionNotification;
+        }
+
+        MissionUIManager.OnMissionsCacheUpdated -= UpdateMissionNotification;
+        MissionUIManager.OnMissionsCacheUpdated += UpdateMissionNotification;
+
+        UpdateMissionNotification();
     }
 
     private void OnDestroy()
@@ -90,6 +109,21 @@ public class HomeUIManager : MonoBehaviour
         if (ProgressDataManager.Instance != null)
         {
             ProgressDataManager.Instance.OnSnapshotChanged -= HandleSnapshotChanged;
+        }
+
+        if (MissionProgressManager.Instance != null)
+        {
+            MissionProgressManager.Instance.OnAnyProgressChanged -= UpdateMissionNotification;
+        }
+
+        MissionUIManager.OnMissionsCacheUpdated -= UpdateMissionNotification;
+    }
+
+    private void UpdateMissionNotification()
+    {
+        if (missionNotificationIcon != null && MissionProgressManager.Instance != null)
+        {
+            missionNotificationIcon.SetActive(MissionProgressManager.Instance.HasUnclaimedMissions());
         }
     }
 
@@ -255,6 +289,9 @@ public class HomeUIManager : MonoBehaviour
         if (LeaderboardRowPrefab == null || LeaderboardContent == null || resp.leaderboard == null) return;
 
         bool anyHighlighted = false;
+        int userRowIndex = -1;
+        int totalCount = resp.leaderboard.Length;
+
         for (int i = 0; i < resp.leaderboard.Length; i++)
         {
             var e = resp.leaderboard[i];
@@ -268,7 +305,11 @@ public class HomeUIManager : MonoBehaviour
                 (highlightRank > 0 && e.rank == highlightRank) ||
                 (!string.IsNullOrEmpty(highlightFullName) && !string.IsNullOrEmpty(e.fullName) && string.Equals(e.fullName, highlightFullName, StringComparison.OrdinalIgnoreCase));
             row.SetHighlighted(isHighlighted);
-            if (isHighlighted) anyHighlighted = true;
+            if (isHighlighted)
+            {
+                anyHighlighted = true;
+                userRowIndex = i;
+            }
 
             if (DebugLeaderboardHighlight && (isHighlighted || i < 3))
             {
@@ -285,6 +326,46 @@ public class HomeUIManager : MonoBehaviour
         {
             Debug.LogWarning("Leaderboard: no highlighted row found. Check userRank and row data ids/names/ranks, and ensure HighlightBackgroundSprite is assigned on the row prefab.");
         }
+
+        if (userRowIndex != -1)
+        {
+            StartCoroutine(ScrollToUser(userRowIndex, totalCount));
+        }
+    }
+
+    private IEnumerator ScrollToUser(int index, int totalCount)
+    {
+        if (leaderboardScrollRect == null || totalCount <= 1) yield break;
+
+        Canvas.ForceUpdateCanvases();
+
+        if (leaderboardScrollRect.content != null)
+        {
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(leaderboardScrollRect.content);
+        }
+
+        yield return new WaitForSecondsRealtime(0.05f);
+
+        float startPos = 1f;
+        leaderboardScrollRect.verticalNormalizedPosition = startPos;
+
+        float targetPos = 1f - ((float)index / (totalCount - 1));
+        targetPos = Mathf.Clamp01(targetPos);
+
+        float elapsed = 0f;
+        while (elapsed < scrollDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / scrollDuration;
+            t = t * t * (3f - 2f * t);
+
+            leaderboardScrollRect.verticalNormalizedPosition = Mathf.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+
+        leaderboardScrollRect.verticalNormalizedPosition = targetPos;
+
+        Debug.Log($"[Leaderboard] Smoothly scrolled to user at index {index}/{totalCount}. Target: {targetPos}");
     }
 
     private IEnumerator LoadAvatarSpriteRoutine(string url, Image target)
